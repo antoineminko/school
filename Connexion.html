@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - Schoolease</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        
+    </style>
+</head>
+<body>
+    <!-- Interface de connexion/inscription -->
+    <div class="auth-container" id="auth-container">
+        <!-- Section de bienvenue -->
+        <div class="welcome-section">
+            <h1><i class="fas fa-graduation-cap me-2"></i>Schoolease</h1>
+            <p>La plateforme éducative complète pour gérer votre établissement, suivre les progrès des élèves et faciliter la communication entre tous les acteurs.</p>
+            
+            <ul class="features-list">
+                <li><i class="fas fa-chalkboard-teacher"></i> Gestion simplifiée des classes et emplois du temps</li>
+                <li><i class="fas fa-chart-line"></i> Suivi détaillé des résultats et progrès des élèves</li>
+                <li><i class="fas fa-comments"></i> Communication directe entre enseignants, élèves et parents</li>
+                <li><i class="fas fa-calendar-alt"></i> Organisation des événements scolaires et activités</li>
+                <li><i class="fas fa-file-alt"></i> Partage de ressources et documents pédagogiques</li>
+            </ul>
+        </div>
+        
+        <!-- Section d'authentification -->
+        <div class="auth-section">
+            <!-- Onglets Connexion/Inscription -->
+            <div class="auth-tabs">
+                <div class="auth-tab active" data-tab="login">Se connecter</div>
+                <div class="auth-tab" data-tab="register">Créer un compte</div>
+            </div>
+            
+            <!-- Formulaire de connexion -->
+            <div class="auth-form active" id="login-form">
+                <h2 class="form-title">Connectez-vous à votre compte</h2>
+                
+                <!-- Sélecteur de rôle pour la connexion -->
+                <div class="role-selector">
+                    <div class="role-option active" data-role="student">
+                        <i class="fas fa-user-graduate"></i>
+                        <div class="role-name">Élève</div>
+                        <div class="role-desc">Accédez à vos cours</div>
+                    </div>
+                    <div class="role-option" data-role="teacher">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <div class="role-name">Professeur</div>
+                        <div class="role-desc">Gérez vos classes</div>
+                    </div>
+                    <div class="role-option" data-role="parent">
+                        <i class="fas fa-user-friends"></i>
+                        <div class="role-name">Parent</div>
+                        <div class="role-desc">Suivez vos enfants</div>
+                    </div>
+                    <div class="role-option admin" data-role="admin">
+                        <i class="fas fa-user-shield"></i>
+                        <div class="role-name">Administrateur</div>
+                        <div class="role-desc">Gérez l'établissement</div>
+                    </div>
+                </div>
+                
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <input type="email" class="form-control" id="login-email" placeholder="Adresse email" required>
+                    </div>
+                    
+                    <div class="mb-3 password-toggle">
+                        <input type="password" class="form-control" id="login-password" placeholder="Mot de passe" required>
+                        <span class="toggle-icon" id="toggleLoginPassword">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                    
+                    <div class="remember-forgot">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">
+                                Se souvenir de moi
+                            </label>
+                        </div>
+                        <a href="#" id="forgot-password">Mot de passe oublié?</a>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt me-2"></i>Se connecter
+                    </button>
+                </form>
+                
+                <div class="form-footer">
+                    <p>Vous n'avez pas de compte? <a href="#" id="switch-to-register">Inscrivez-vous ici</a></p>
+                </div>
+            </div>
+            
+            <!-- Formulaire d'inscription -->
+            <div class="auth-form" id="register-form">
+                <h2 class="form-title">Créez votre compte Schoolease</h2>
+                
+                <!-- Sélecteur de rôle pour l'inscription -->
+                <div class="role-selector">
+                    <div class="role-option active" data-role="student">
+                        <i class="fas fa-user-graduate"></i>
+                        <div class="role-name">Élève</div>
+                        <div class="role-desc">Accédez à vos cours</div>
+                    </div>
+                    <div class="role-option" data-role="teacher">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <div class="role-name">Professeur</div>
+                        <div class="role-desc">Gérez vos classes</div>
+                    </div>
+                    <div class="role-option" data-role="parent">
+                        <i class="fas fa-user-friends"></i>
+                        <div class="role-name">Parent</div>
+                        <div class="role-desc">Suivez vos enfants</div>
+                    </div>
+                    <div class="role-option admin" data-role="admin">
+                        <i class="fas fa-user-shield"></i>
+                        <div class="role-name">Administrateur</div>
+                        <div class="role-desc">Gérez l'établissement</div>
+                    </div>
+                </div>
+                
+                <div class="admin-warning" id="admin-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Attention :</strong> Les comptes administrateur nécessitent une validation manuelle par un super administrateur.
+                </div>
+                
+                <form id="registerForm">
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="register-name" placeholder="Nom complet" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <input type="email" class="form-control" id="register-email" placeholder="Adresse email" required>
+                    </div>
+                    
+                    <div class="mb-3 password-toggle">
+                        <input type="password" class="form-control" id="register-password" placeholder="Nouveau mot de passe" required>
+                        <span class="toggle-icon" id="toggleRegisterPassword">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                        <div class="password-requirements" id="password-requirements">
+                            <div class="requirement unmet" id="length-req">
+                                <i class="fas fa-circle"></i> Au moins 8 caractères
+                            </div>
+                            <div class="requirement unmet" id="uppercase-req">
+                                <i class="fas fa-circle"></i> Au moins une majuscule
+                            </div>
+                            <div class="requirement unmet" id="number-req">
+                                <i class="fas fa-circle"></i> Au moins un chiffre
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3 admin-code" id="admin-code">
+                        <input type="text" class="form-control" id="register-admin-code" placeholder="Code d'activation administrateur">
+                        <small class="text-muted">Ce code vous sera fourni par l'établissement</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <input type="tel" class="form-control" id="register-phone" placeholder="Numéro de téléphone (optionnel)">
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="register-terms" required>
+                        <label class="form-check-label" for="register-terms">
+                            J'accepte les <a href="#">conditions d'utilisation</a>
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" id="register-button">
+                        <i class="fas fa-user-plus me-2"></i>Créer mon compte
+                    </button>
+                </form>
+                
+                <div class="form-footer">
+                    <p>Vous avez déjà un compte? <a href="#" id="switch-to-login">Connectez-vous ici</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tableau de bord (caché par défaut) -->
+    <div class="dashboard" id="dashboard">
+        <!-- En-tête du tableau de bord -->
+        <header class="dashboard-header">
+            <div class="container">
+                <nav class="navbar navbar-expand-lg navbar-light">
+                    <a class="navbar-brand" href="#">
+                        <i class="fas fa-graduation-cap me-2"></i>Schoolease
+                    </a>
+                    <div class="user-info ms-auto">
+                        <div class="user-avatar" id="user-avatar">U</div>
+                        <div>
+                            <div id="user-name">Utilisateur</div>
+                            <div id="user-role" class="text-muted" style="font-size: 0.8rem;">Rôle</div>
+                        </div>
+                        <button class="logout-btn ms-3" id="logout-btn">
+                            <i class="fas fa-sign-out-alt me-1"></i>Déconnexion
+                        </button>
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Contenu du tableau de bord -->
+        <main class="dashboard-content">
+            <div class="welcome-message">
+                <h2 id="welcome-title">Bienvenue sur votre tableau de bord</h2>
+                <p id="welcome-text">Vous êtes connecté en tant que <span id="user-role-text">utilisateur</span>.</p>
+                <p class="text-muted" id="last-login">Dernière connexion: <span id="last-login-time">Chargement...</span></p>
+            </div>
+
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <i class="fas fa-users"></i>
+                    <div class="stat-value" id="stat-users">0</div>
+                    <div class="stat-label">Utilisateurs</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-book-open"></i>
+                    <div class="stat-value" id="stat-courses">0</div>
+                    <div class="stat-label">Cours</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-calendar-check"></i>
+                    <div class="stat-value" id="stat-events">0</div>
+                    <div class="stat-label">Événements</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-chart-line"></i>
+                    <div class="stat-value" id="stat-performance">0%</div>
+                    <div class="stat-label">Performance</div>
+                </div>
+            </div>
+
+            <div class="recent-activities">
+                <h3>Activités récentes</h3>
+                <div id="activities-list">
+                    <!-- Les activités seront chargées dynamiquement -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+       
+    </script>
+</body>
+</html>

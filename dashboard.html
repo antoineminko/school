@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - Schoolease</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --success: #27ae60;
+            --info: #2980b9;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+        }
+        
+        .sidebar {
+            background: linear-gradient(180deg, var(--dark) 0%, #34495e 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 0;
+        }
+        
+        .sidebar-sticky {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 20px;
+            border-left: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left-color: var(--primary);
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .badge-notification {
+            background-color: var(--danger);
+        }
+        
+        .welcome-card {
+            background: linear-gradient(135deg, var(--primary), #2980b9);
+            color: white;
+        }
+        
+        .stat-card {
+            transition: transform 0.3s;
+            height: 100%;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-icon {
+            font-size: 2rem;
+            opacity: 0.8;
+        }
+        
+        .student { color: #9b59b6; }
+        .teacher { color: #f39c12; }
+        .parent { color: #16a085; }
+        .admin { color: #8e44ad; }
+        
+        .activity-item {
+            border-left: 3px solid var(--primary);
+            padding-left: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .progress {
+            height: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                min-height: auto;
+            }
+            
+            .sidebar-sticky {
+                height: auto;
+            }
+            
+            .welcome-card h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar d-md-block">
+                <div class="sidebar-sticky pt-3">
+                    <!-- Logo et nom de l'application -->
+                    <div class="text-center mb-4">
+                        <h4 class="text-white">
+                            <i class="fas fa-graduation-cap"></i> Schoolease
+                        </h4>
+                        <small class="text-muted" id="user-role-display">Administrateur</small>
+                    </div>
+                    
+                    <!-- Menu de navigation -->
+                    <ul class="nav flex-column" id="sidebar-menu">
+                        <!-- Le menu sera généré dynamiquement -->
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Contenu principal -->
+            <main class="col-md-9 col-lg-10 ms-sm-auto px-md-4">
+                <!-- Barre de navigation supérieure -->
+                <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
+                    <div class="container-fluid">
+                        <button class="navbar-toggler d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        
+                        <div class="d-flex align-items-center">
+                            <h5 class="mb-0 me-3 d-none d-md-block" id="page-title">Tableau de Bord</h5>
+                            <span class="badge bg-primary" id="role-badge">Admin</span>
+                        </div>
+                        
+                        <div class="navbar-nav ms-auto align-items-center">
+                            <div class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 35px; height: 35px;">
+                                        <span class="text-white fw-bold" id="user-avatar">A</span>
+                                    </div>
+                                    <span id="user-name">Admin</span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Mon profil</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Paramètres</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" href="#" id="logout-btn"><i class="fas fa-sign-out-alt me-2"></i>Déconnexion</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- Contenu du tableau de bord -->
+                <div class="container-fluid">
+                    <!-- Carte de bienvenue -->
+                    <div class="card welcome-card mb-4 border-0 shadow">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h2 id="welcome-title">Bienvenue, Administrateur</h2>
+                                    <p id="welcome-text" class="mb-0">Vous avez 3 nouvelles demandes en attente de validation.</p>
+                                </div>
+                                <div class="col-md-4 text-md-end">
+                                    <i class="fas fa-chart-line fa-3x opacity-75"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cartes de statistiques -->
+                    <div class="row mb-4" id="stats-cards">
+                        <!-- Les cartes de stats seront générées dynamiquement -->
+                    </div>
+
+                    <!-- Contenu principal -->
+                    <div class="row">
+                        <!-- Colonne de gauche -->
+                        <div class="col-lg-8">
+                            <!-- Emploi du temps -->
+                            <div class="card shadow-sm mb-4">
+                                <div class="card-header bg-white">
+                                    <h5 class="card-title mb-0"><i class="fas fa-calendar-alt me-2"></i>Emploi du temps du jour</h5>
+                                </div>
+                                <div class="card-body" id="schedule-content">
+                                    <!-- L'emploi du temps sera généré dynamiquement -->
+                                </div>
+                            </div>
+
+                            <!-- Activités récentes -->
+                            <div class="card shadow-sm">
+                                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title mb-0"><i class="fas fa-bell me-2"></i>Activités récentes</h5>
+                                    <a href="#" class="btn btn-sm btn-outline-primary">Voir tout</a>
+                                </div>
+                                <div class="card-body" id="activities-content">
+                                    <!-- Les activités seront générées dynamiquement -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Colonne de droite -->
+                        <div class="col-lg-4">
+                            <!-- Progression -->
+                            <div class="card shadow-sm mb-4">
+                                <div class="card-header bg-white">
+                                    <h5 class="card-title mb-0"><i class="fas fa-chart-line me-2"></i>Progression</h5>
+                                </div>
+                                <div class="card-body" id="progress-content">
+                                    <!-- La progression sera générée dynamiquement -->
+                                </div>
+                            </div>
+
+                            <!-- Calendrier -->
+                            <div class="card shadow-sm">
+                                <div class="card-header bg-white">
+                                    <h5 class="card-title mb-0"><i class="fas fa-calendar me-2"></i>Calendrier</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="mini-calendar">
+                                        <!-- Le calendrier sera généré dynamiquement -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Données pour chaque rôle
+        const roleData = {
+            student: {
+                roleName: "Élève",
+                welcome: {
+                    title: "Bienvenue, Élève",
+                    text: "Vous avez 3 devoirs à rendre cette semaine."
+                },
+                menu: [
+                    { icon: "fas fa-home", text: "Tableau de Bord", active: true },
+                    { icon: "fas fa-book", text: "Mes Cours", badge: 8 },
+                    { icon: "fas fa-tasks", text: "Devoirs", badge: 3 },
+                    { icon: "fas fa-chart-line", text: "Résultats" },
+                    { icon: "fas fa-calendar", text: "Emploi du Temps" },
+                    { icon: "fas fa-file-alt", text: "Ressources" }
+                ],
+                stats: [
+                    { icon: "fas fa-book-open", value: "8", label: "Cours suivis", color: "primary" },
+                    { icon: "fas fa-tasks", value: "3", label: "Devoirs en attente", color: "warning" },
+                    { icon: "fas fa-chart-line", value: "85%", label: "Moyenne générale", color: "success" },
+                    { icon: "fas fa-calendar-check", value: "92%", label: "Présence", color: "info" }
+                ],
+                schedule: [
+                    { time: "08:00-09:30", title: "Mathématiques", class: "Salle 204" },
+                    { time: "10:00-11:30", title: "Physique-Chimie", class: "Labo Sciences" },
+                    { time: "14:00-15:30", title: "Histoire-Géographie", class: "Salle 112" }
+                ],
+                activities: [
+                    { text: "Nouveau chapitre ajouté en Mathématiques", time: "Il y a 2 heures" },
+                    { text: "Devoir de Français à rendre pour vendredi", time: "Il y a 1 jour" },
+                    { text: "Résultats du dernier examen disponibles", time: "Il y a 2 jours" },
+                    { text: "Réunion parents-professeurs prévue", time: "Il y a 3 jours" }
+                ],
+                progress: [
+                    { subject: "Mathématiques", value: 88 },
+                    { subject: "Français", value: 76 },
+                    { subject: "Anglais", value: 92 },
+                    { subject: "SVT", value: 81 }
+                ]
+            },
+            teacher: {
+                roleName: "Professeur",
+                welcome: {
+                    title: "Bienvenue, Professeur",
+                    text: "Vous avez 12 copies à corriger cette semaine."
+                },
+                menu: [
+                    { icon: "fas fa-home", text: "Tableau de Bord", active: true },
+                    { icon: "fas fa-users", text: "Mes Classes", badge: 4 },
+                    { icon: "fas fa-book", text: "Cours & Leçons" },
+                    { icon: "fas fa-tasks", text: "Devoirs", badge: 12 },
+                    { icon: "fas fa-chart-bar", text: "Évaluations" },
+                    { icon: "fas fa-calendar", text: "Planning" }
+                ],
+                stats: [
+                    { icon: "fas fa-users", value: "28", label: "Élèves", color: "primary" },
+                    { icon: "fas fa-book", value: "4", label: "Classes", color: "info" },
+                    { icon: "fas fa-tasks", value: "12", label: "Devoirs à corriger", color: "warning" },
+                    { icon: "fas fa-clock", value: "18h", label: "Heures cette semaine", color: "success" }
+                ],
+                schedule: [
+                    { time: "09:00-10:30", title: "Terminale S - Maths", class: "Salle 204" },
+                    { time: "11:00-12:30", title: "Première ES - Maths", class: "Salle 112" },
+                    { time: "14:00-15:00", title: "Réunion pédagogique", class: "Salle des profs" }
+                ],
+                activities: [
+                    { text: "12 copies de mathématiques à corriger", time: "Il y a 1 heure" },
+                    { text: "Nouvel élève dans la classe de Terminale", time: "Il y a 3 heures" },
+                    { text: "Réunion parents-professeurs vendredi", time: "Il y a 1 jour" },
+                    { text: "Nouvelle leçon planifiée pour lundi", time: "Il y a 2 jours" }
+                ],
+                progress: [
+                    { subject: "Terminale S", value: 84 },
+                    { subject: "Première ES", value: 76 },
+                    { subject: "Seconde", value: 89 },
+                    { subject: "Moyenne générale", value: 82 }
+                ]
+            },
+            parent: {
+                roleName: "Parent",
+                welcome: {
+                    title: "Bienvenue, Parent",
+                    text: "Vos enfants ont 5 devoirs à faire cette semaine."
+                },
+                menu: [
+                    { icon: "fas fa-home", text: "Tableau de Bord", active: true },
+                    { icon: "fas fa-user-graduate", text: "Mes Enfants", badge: 2 },
+                    { icon: "fas fa-chart-line", text: "Résultats" },
+                    { icon: "fas fa-calendar", text: "Emploi du Temps" },
+                    { icon: "fas fa-file-invoice", text: "Factures" },
+                    { icon: "fas fa-comments", text: "Communication", badge: 3 }
+                ],
+                stats: [
+                    { icon: "fas fa-user-graduate", value: "2", label: "Enfants", color: "primary" },
+                    { icon: "fas fa-book", value: "5", label: "Devoirs cette semaine", color: "warning" },
+                    { icon: "fas fa-chart-line", value: "78%", label: "Moyenne générale", color: "success" },
+                    { icon: "fas fa-calendar-check", value: "95%", label: "Présence", color: "info" }
+                ],
+                schedule: [
+                    { time: "08:30-10:00", title: "Mathématiques - Lucas", class: "Collège" },
+                    { time: "10:15-11:45", title: "Français - Emma", class: "Lycée" },
+                    { time: "16:00-17:00", title: "RDV Parent-Profs", class: "École" }
+                ],
+                activities: [
+                    { text: "Nouvelle note en Mathématiques pour Lucas", time: "Il y a 2 heures" },
+                    { text: "Devoir à faire pour Emma pour demain", time: "Il y a 5 heures" },
+                    { text: "Message du professeur de Français", time: "Il y a 1 jour" },
+                    { text: "Sortie scolaire prévue le 15 mai", time: "Il y a 3 jours" }
+                ],
+                progress: [
+                    { subject: "Lucas - Mathématiques", value: 82 },
+                    { subject: "Lucas - Français", value: 75 },
+                    { subject: "Emma - Sciences", value: 88 },
+                    { subject: "Emma - Anglais", value: 92 }
+                ]
+            },
+            admin: {
+                roleName: "Administrateur",
+                welcome: {
+                    title: "Bienvenue, Administrateur",
+                    text: "3 nouvelles demandes d'inscription en attente."
+                },
+                menu: [
+                    { icon: "fas fa-home", text: "Tableau de Bord", active: true },
+                    { icon: "fas fa-users", text: "Utilisateurs", badge: 3 },
+                    { icon: "fas fa-chalkboard-teacher", text: "Enseignants" },
+                    { icon: "fas fa-graduation-cap", text: "Élèves" },
+                    { icon: "fas fa-building", text: "Classes" },
+                    { icon: "fas fa-chart-bar", text: "Rapports" }
+                ],
+                stats: [
+                    { icon: "fas fa-users", value: "245", label: "Élèves", color: "primary" },
+                    { icon: "fas fa-chalkboard-teacher", value: "32", label: "Enseignants", color: "info" },
+                    { icon: "fas fa-building", value: "15", label: "Classes", color: "success" },
+                    { icon: "fas fa-chart-line", value: "94%", label: "Taux de réussite", color: "warning" }
+                ],
+                schedule: [
+                    { time: "09:00-10:30", title: "Réunion de direction", class: "Bureau du directeur" },
+                    { time: "11:00-12:00", title: "Entretien avec nouveau professeur", class: "Salle de réunion" },
+                    { time: "14:30-16:00", title: "Commission pédagogique", class: "Salle des profs" }
+                ],
+                activities: [
+                    { text: "3 nouvelles demandes d'inscription", time: "Il y a 1 heure" },
+                    { text: "Rapport trimestriel à générer", time: "Il y a 3 heures" },
+                    { text: "Conseil d'administration le 20 mai", time: "Il y a 1 jour" },
+                    { text: "Statistiques de fin d'année à préparer", time: "Il y a 2 jours" }
+                ],
+                progress: [
+                    { subject: "Taux de remplissage des classes", value: 92 },
+                    { subject: "Satisfaction des parents", value: 87 },
+                    { subject: "Résultats aux examens", value: 94 },
+                    { subject: "Efficacité administrative", value: 89 }
+                ]
+            }
+        };
+
+        // Au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Vérifier si l'utilisateur est connecté
+            const userDataStr = localStorage.getItem('schoolease_userData');
+            
+            if (!userDataStr) {
+                // Rediriger vers la page de connexion si non connecté
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            const userData = JSON.parse(userDataStr);
+            const role = userData.role || 'student';
+            const data = roleData[role] || roleData.student;
+            
+            // Mettre à jour les informations utilisateur
+            document.getElementById('user-name').textContent = userData.name || 'Utilisateur';
+            document.getElementById('user-avatar').textContent = (userData.name || 'U').charAt(0).toUpperCase();
+            document.getElementById('user-role-display').textContent = data.roleName;
+            document.getElementById('role-badge').textContent = data.roleName;
+            document.getElementById('page-title').textContent = `Tableau de Bord - ${data.roleName}`;
+            
+            // Générer le contenu du tableau de bord
+            generateDashboardContent(data, userData);
+            
+            // Gérer la déconnexion
+            document.getElementById('logout-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                localStorage.removeItem('schoolease_userData');
+                window.location.href = 'login.html';
+            });
+        });
+        
+        // Fonction pour générer le contenu du tableau de bord
+        function generateDashboardContent(data, userData) {
+            // Mettre à jour la carte de bienvenue
+            document.getElementById('welcome-title').textContent = data.welcome.title;
+            document.getElementById('welcome-text').textContent = data.welcome.text;
+            
+            // Générer le menu sidebar
+            generateSidebarMenu(data.menu);
+            
+            // Générer les cartes de statistiques
+            generateStatsCards(data.stats);
+            
+            // Générer l'emploi du temps
+            generateSchedule(data.schedule);
+            
+            // Générer les activités récentes
+            generateActivities(data.activities);
+            
+            // Générer la progression
+            generateProgress(data.progress);
+            
+            // Générer le mini calendrier
+            generateMiniCalendar();
+        }
+        
+        // Fonction pour générer le menu sidebar
+        function generateSidebarMenu(menuItems) {
+            const sidebarMenu = document.getElementById('sidebar-menu');
+            sidebarMenu.innerHTML = '';
+            
+            menuItems.forEach(item => {
+                const menuItem = document.createElement('li');
+                menuItem.className = 'nav-item';
+                
+                const menuLink = document.createElement('a');
+                menuLink.className = `nav-link ${item.active ? 'active' : ''}`;
+                menuLink.href = '#';
+                
+                let badgeHTML = '';
+                if (item.badge) {
+                    badgeHTML = `<span class="badge badge-notification rounded-pill ms-2">${item.badge}</span>`;
+                }
+                
+                menuLink.innerHTML = `<i class="${item.icon}"></i> ${item.text} ${badgeHTML}`;
+                
+                menuItem.appendChild(menuLink);
+                sidebarMenu.appendChild(menuItem);
+            });
+        }
+        
+        // Fonction pour générer les cartes de statistiques
+        function generateStatsCards(stats) {
+            const statsContainer = document.getElementById('stats-cards');
+            statsContainer.innerHTML = '';
+            
+            stats.forEach(stat => {
+                const col = document.createElement('div');
+                col.className = 'col-sm-6 col-xl-3 mb-3';
+                
+                col.innerHTML = `
+                    <div class="card stat-card shadow-sm border-0">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-grow-1">
+                                    <h4 class="card-title">${stat.value}</h4>
+                                    <p class="card-text text-muted">${stat.label}</p>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <i class="${stat.icon} stat-icon text-${stat.color}"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                statsContainer.appendChild(col);
+            });
+        }
+        
+        // Fonction pour générer l'emploi du temps
+        function generateSchedule(schedule) {
+            const scheduleContent = document.getElementById('schedule-content');
+            scheduleContent.innerHTML = '';
+            
+            if (schedule.length === 0) {
+                scheduleContent.innerHTML = '<p class="text-muted">Aucun cours prévu aujourd\'hui.</p>';
+                return;
+            }
+            
+            schedule.forEach(item => {
+                const scheduleItem = document.createElement('div');
+                scheduleItem.className = 'mb-3';
+                
+                scheduleItem.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="mb-1">${item.title}</h6>
+                            <p class="text-muted mb-0">${item.class}</p>
+                        </div>
+                        <span class="badge bg-light text-dark">${item.time}</span>
+                    </div>
+                `;
+                
+                if (schedule.indexOf(item) < schedule.length - 1) {
+                    scheduleItem.innerHTML += '<hr>';
+                }
+                
+                scheduleContent.appendChild(scheduleItem);
+            });
+        }
+        
+        // Fonction pour générer les activités récentes
+        function generateActivities(activities) {
+            const activitiesContent = document.getElementById('activities-content');
+            activitiesContent.innerHTML = '';
+            
+            activities.forEach(activity => {
+                const activityItem = document.createElement('div');
+                activityItem.className = 'activity-item';
+                
+                activityItem.innerHTML = `
+                    <p class="mb-1">${activity.text}</p>
+                    <small class="text-muted">${activity.time}</small>
+                `;
+                
+                activitiesContent.appendChild(activityItem);
+            });
+        }
+        
+        // Fonction pour générer la progression
+        function generateProgress(progressItems) {
+            const progressContent = document.getElementById('progress-content');
+            progressContent.innerHTML = '';
+            
+            progressItems.forEach(item => {
+                const progressItem = document.createElement('div');
+                progressItem.className = 'mb-3';
+                
+                progressItem.innerHTML = `
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>${item.subject}</span>
+                        <span>${item.value}%</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" style="width: ${item.value}%"></div>
+                    </div>
+                `;
+                
+                progressContent.appendChild(progressItem);
+            });
+        }
+        
+        // Fonction pour générer le mini calendrier
+        function generateMiniCalendar() {
+            const calendarContainer = document.getElementById('mini-calendar');
+            const today = new Date();
+            const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
+            
+            let calendarHTML = `
+                <div class="text-center mb-3">
+                    <h6>${monthNames[today.getMonth()]} ${today.getFullYear()}</h6>
+                </div>
+                <div class="d-grid gap-1" style="grid-template-columns: repeat(7, 1fr);">
+            `;
+            
+            // En-têtes des jours
+            const days = ["L", "M", "M", "J", "V", "S", "D"];
+            days.forEach(day => {
+                calendarHTML += `<div class="text-center text-muted small">${day}</div>`;
+            });
+            
+            // Jours du mois (simplifié)
+            for (let i = 1; i <= 31; i++) {
+                let dayClass = "text-center p-1";
+                if (i === today.getDate()) {
+                    dayClass += " bg-primary text-white rounded";
+                }
+                calendarHTML += `<div class="${dayClass}">${i}</div>`;
+            }
+            
+            calendarHTML += `</div>`;
+            calendarContainer.innerHTML = calendarHTML;
+        }
+    </script>
+</body>
+</html>
